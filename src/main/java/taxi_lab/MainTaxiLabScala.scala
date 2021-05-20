@@ -6,6 +6,8 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.{SparkConf, SparkContext}
 
+import java.time.LocalDate
+
 object MainTaxiLabScala {
 
   def main(args: Array[String]): Unit = {
@@ -24,6 +26,14 @@ object MainTaxiLabScala {
     val lines = rdd.count()
     println(s"Number of lines: $lines")
 
+    val value: RDD[Array[String]] = rdd.map(line => line.split(" "))
+    val value1: RDD[Trip] = value.map(x => Trip(Integer.parseInt(x(0)), x(1).toUpperCase, Integer.parseInt(x(2)), LocalDate.now()))
+    val value2: RDD[Trip] = value1.filter(trip => trip.city == "BOSTON" && trip.distance > 10)
+    val bostonTripMoreThan10 = value2.count()
+    println(s"Number of trips to Boston longer than 10KM: $bostonTripMoreThan10")
+
+//    value.map(l => new Trip(l.))
+//    value.map(line => Tuple4(_1 = line[0],_2 = line[1],_3 = line[2],_4 = line[3]))
   }
 
 }
