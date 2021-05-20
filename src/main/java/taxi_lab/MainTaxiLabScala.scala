@@ -32,6 +32,15 @@ object MainTaxiLabScala {
     val bostonTripMoreThan10 = value2.count()
     println(s"Number of trips to Boston longer than 10KM: $bostonTripMoreThan10")
 
+
+    val kilometersTripsToBoston = rdd.map(line => line.split(" "))
+      .map(x => Trip(Integer.parseInt(x(0)), x(1).toUpperCase, Integer.parseInt(x(2)), LocalDate.now()))
+      .filter(trip => trip.city == "BOSTON")
+      .map(_.distance)
+      .sum()
+
+    println(s"Total kilometers of trips to Boston: $kilometersTripsToBoston")
+
 //    value.map(l => new Trip(l.))
 //    value.map(line => Tuple4(_1 = line[0],_2 = line[1],_3 = line[2],_4 = line[3]))
   }
