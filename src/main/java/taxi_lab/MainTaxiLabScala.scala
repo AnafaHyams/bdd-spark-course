@@ -40,13 +40,13 @@ object MainTaxiLabScala {
       .mapValues(list => list.map(trip => trip.distance).sum)
       .sortBy(_._2, ascending = false)
 
-    val value4: RDD[(Int, String)] = driversRdd.map(line => line.split(", "))
+    val drivers_id_names: RDD[(Int, String)] = driversRdd.map(line => line.split(", "))
       .map(x => Driver(Integer.parseInt(x(0)), x(1), x(2), x(3)))
       .map(driver => (driver.driverID, driver.name))
 
 
     println("Name of 3 drivers with max total kilometers:")
-    drivers_km.join(value4).take(3)
+    drivers_km.join(drivers_id_names).take(3)
       .foreach(tuple => println(tuple._2._2))
   }
 
@@ -61,10 +61,11 @@ object MainTaxiLabScala {
   }
 
   private def countAndPrintAmountTripsToBostonLongerThan10Km(rdd: RDD[String]): Unit = {
-    val value: RDD[Array[String]] = rdd.map(line => line.split(" "))
-    val value1: RDD[Trip] = value.map(x => models.Trip(Integer.parseInt(x(0)), x(1).toUpperCase, Integer.parseInt(x(2)), LocalDate.now()))
-    val value2: RDD[Trip] = value1.filter(trip => trip.city == "BOSTON" && trip.distance > 10)
-    val bostonTripMoreThan10 = value2.count()
+    val bostonTripMoreThan10: Long = rdd.map(line => line.split(" "))
+      .map(x => models.Trip(Integer.parseInt(x(0)), x(1).toUpperCase, Integer.parseInt(x(2)), LocalDate.now()))
+      .filter(trip => trip.city == "BOSTON" && trip.distance > 10)
+      .count()
+
     println(s"Number of trips to Boston longer than 10KM: $bostonTripMoreThan10")
   }
 
