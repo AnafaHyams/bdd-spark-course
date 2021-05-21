@@ -1,9 +1,7 @@
 package taxi_lab
 
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.api.java.{JavaRDD, JavaSparkContext}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.storage.StorageLevel
 import org.apache.spark.{SparkConf, SparkContext}
 import taxi_lab.models.{Driver, Trip}
 
