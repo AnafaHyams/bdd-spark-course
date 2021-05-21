@@ -41,8 +41,24 @@ object MainTaxiLabScala {
 
     println(s"Total kilometers of trips to Boston: $totalKilometersTripsToBoston")
 
-//    value.map(l => new Trip(l.))
-//    value.map(line => Tuple4(_1 = line[0],_2 = line[1],_3 = line[2],_4 = line[3]))
+    val drivers_km: RDD[(Int, Int)] = rdd.map(line => line.split(" "))
+      .map(x => Trip(Integer.parseInt(x(0)), x(1).toUpperCase, Integer.parseInt(x(2)), LocalDate.now()))
+      .groupBy(t => t.driverID)
+      .mapValues(list => list.map(trip => trip.distance).sum)
+      .sortBy(_._2, ascending = false)
+      //.take(3).
+
+    val driversRdd = sc.textFile("data/taxi/drivers.txt")
+
+    val value4: RDD[(Int, String)] = driversRdd.map(line => line.split(", "))
+      .map(x => Driver(Integer.parseInt(x(0)), x(1), x(2), x(3)))
+      .map(driver => (driver.driverID, driver.name))
+
+
+    println("Name of 3 drivers with max total kilometers:")
+    drivers_km.join(value4).take(3)
+      .foreach(tuple => println(tuple._2._2))
+
   }
 
 }
