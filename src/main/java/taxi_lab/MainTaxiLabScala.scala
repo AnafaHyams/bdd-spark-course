@@ -5,6 +5,7 @@ import org.apache.spark.api.java.{JavaRDD, JavaSparkContext}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.{SparkConf, SparkContext}
+import taxi_lab.models.{Driver, Trip}
 
 import java.time.LocalDate
 
@@ -53,7 +54,7 @@ object MainTaxiLabScala {
 
   private def calculateAndPrintSumOfAllKmToCity(rdd: RDD[String], cityName: String): Unit = {
     val totalKilometersTripsToBoston = rdd.map(line => line.split(" "))
-      .map(x => Trip(Integer.parseInt(x(0)), x(1).toUpperCase, Integer.parseInt(x(2)), LocalDate.now()))
+      .map(x => models.Trip(Integer.parseInt(x(0)), x(1).toUpperCase, Integer.parseInt(x(2)), LocalDate.now()))
       .filter(trip => trip.city == cityName)
       .map(_.distance)
       .sum()
@@ -63,7 +64,7 @@ object MainTaxiLabScala {
 
   private def countAndPrintAmountTripsToBostonLongerThan10Km(rdd: RDD[String]): Unit = {
     val value: RDD[Array[String]] = rdd.map(line => line.split(" "))
-    val value1: RDD[Trip] = value.map(x => Trip(Integer.parseInt(x(0)), x(1).toUpperCase, Integer.parseInt(x(2)), LocalDate.now()))
+    val value1: RDD[Trip] = value.map(x => models.Trip(Integer.parseInt(x(0)), x(1).toUpperCase, Integer.parseInt(x(2)), LocalDate.now()))
     val value2: RDD[Trip] = value1.filter(trip => trip.city == "BOSTON" && trip.distance > 10)
     val bostonTripMoreThan10 = value2.count()
     println(s"Number of trips to Boston longer than 10KM: $bostonTripMoreThan10")
